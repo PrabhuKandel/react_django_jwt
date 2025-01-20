@@ -54,63 +54,58 @@ export const AuthProvider = ({children}) =>
 
     }
    
-    let updateToken = async ()=>{
+    // let updateToken = async ()=>{
    
-        let response = await fetch('http://127.0.0.1:8000/api/token/refresh/',{
-            method: 'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body:JSON.stringify({
-                'refresh': authTokens?.refresh
-            })
-        })
+    //     let response = await fetch('http://127.0.0.1:8000/api/token/refresh/',{
+    //         method: 'POST',
+    //         headers:{
+    //             'Content-Type':'application/json'
+    //         },
+    //         body:JSON.stringify({
+    //             'refresh': authTokens?.refresh
+    //         })
+    //     })
          
-        let data = await response.json()
+    //     let data = await response.json()
 
-        if(response.status == 200)
-        {
-            setAuthTokens(data)
-            setUser(jwtDecode(data.access))
-            localStorage.setItem('authTokens' , JSON.stringify(data))
+    //     if(response.status == 200)
+    //     {
+    //         setAuthTokens(data)
+    //         setUser(jwtDecode(data.access))
+    //         localStorage.setItem('authTokens' , JSON.stringify(data))
          
-        }
-        else
-        {
-            logoutUser()
-        }
+    //     }
+    //     else
+    //     {
+    //         logoutUser()
+    //     }
 
-        if(loading)
-        {
-            setLoading(false)
-        }
+    //     if(loading)
+    //     {
+    //         setLoading(false)
+    //     }
 
         
-    }
+    // }
 
     let contextData = {
         user:user,
         authTokens:authTokens,
+        setAuthTokens:setAuthTokens,
+        setUser:setUser,
         loginUser:loginUser,
-        logoutUser:logoutUser    
+        logoutUser:logoutUser,   
     }
 
     useEffect(()=>{
 
-        if(loading)
-        {
-            updateToken()
+        if(authTokens)
+        {   
+            setUser(jwtDecode(authTokens.access))
+
         }
-       let interval =  setInterval(()=>
-        {
-            if(authTokens)
-            {
+        setLoading(false)
 
-                updateToken()
-            }
-        },4*60*60)
-
-        return ()=>clearInterval(interval)
 
     },[authTokens,loading])
 
